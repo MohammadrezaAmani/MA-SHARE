@@ -9,7 +9,6 @@ uvicorn = "*"
 pydantic = "*"
 requests = "*"
 python-multipart = "*"
-qrcode = "*"
 
 [requires]
 python_version = "3.9"
