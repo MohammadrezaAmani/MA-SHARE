@@ -36,4 +36,4 @@ python3 main.py .
 
 ## Preview
 ![preview](./assets/1.png)
-![preview](./assets/2.png)
+![preview](./assets/3.png)
