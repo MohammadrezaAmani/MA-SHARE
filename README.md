@@ -1,6 +1,6 @@
 # FileManager
 
-simple file manager using [FastAPI](https://fastapi.tiangolo.com/)
+Add, manage and download file from device using another device, written in [python](https://www.python.org/) with [FastAPI](https://fastapi.tiangolo.com/)
 
 ## Installing requirements
 
