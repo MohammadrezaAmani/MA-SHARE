@@ -5,7 +5,7 @@ import uvicorn
 import mimetypes
 import subprocess
 import datetime
-from fastapi import FastAPI, File, UploadFile
+from fastapi import FastAPI, File, UploadFile, Form
 from fastapi.responses import (
     StreamingResponse,
     HTMLResponse,
@@ -18,6 +18,19 @@ app = FastAPI()
 my_ip = subprocess.check_output(["hostname", "-I"]).decode("utf-8").split(" ")[0]
 my_port = 8000
 print(f"Your IP: {my_ip}")
+
+
+def back(file_path: str) -> str:
+    """get back path
+
+    Args:
+        file_path (str): path of the directory
+
+    Returns:
+        str: back path
+    """
+    back = file_path.rsplit("/", 1)[0]
+    return back
 
 
 def convert_file_size(file_size: int) -> str:
@@ -83,22 +96,44 @@ def template(file_path: str) -> HTMLResponse:
     table = ""
     details = get_files(file_path)
     for i in details:
-        table += (
-            f"""
-            <tr>
-                <td><a href="{f"http://{my_ip}:{my_port}" + details[i]['path']}">{i}</a></td>
-                <td>"""
-            + details[i]["file_size"]
-            + """</td>
-                <td>"""
-            + details[i]["file_type"]
-            + """</td>
-                <td>"""
-            + details[i]["created_at"]
-            + """</td>
-            </tr>
-        """
-        )
+        if not details[i]["file_type"] == "Folder":
+            path = f"http://{my_ip}:{my_port}/dl" + details[i]["path"]
+            table += (
+                f"""
+                <tr>
+                    <td><a href="{path}">{i}</a></td>
+                    <td>"""
+                + details[i]["file_size"]
+                + """</td>
+                    <td>"""
+                + details[i]["file_type"]
+                + """</td>
+                    <td>"""
+                + details[i]["created_at"]
+                + """</td>
+                </tr>
+            """
+            )
+
+        else:
+
+            path = f"http://{my_ip}:{my_port}" + details[i]["path"]
+            table += (
+                f"""
+                <tr>
+                    <td><a href="{path}">{i}</a></td>
+                    <td>"""
+                + details[i]["file_size"]
+                + """</td>
+                    <td>"""
+                + details[i]["file_type"]
+                + """</td>
+                    <td>"""
+                + details[i]["created_at"]
+                + """</td>
+                </tr>
+            """
+            )
     html = (
         """
     <!DOCTYPE html>
@@ -165,6 +200,128 @@ def template(file_path: str) -> HTMLResponse:
     return HTMLResponse(content=html, status_code=200)
 
 
+def textEditore_template(file_path: str):
+    # i wanna a text editor here
+    with open(file_path, "r") as f:
+        file_content = f.read()
+    bads = ["<", ">", '"', "'"]
+    if any(bad in file_content for bad in bads):
+        file_content = file_content.replace("<", "&lt;")
+        file_content = file_content.replace(">", "&gt;")
+        file_content = file_content.replace('"', "&quot;")
+        file_content = file_content.replace("'", "&apos;")
+    html = (
+        """
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>File Sharing</title>
+        <style>
+            textarea {
+                width: 100%;
+                height: 100%;
+                background-color: black;
+                color: green;
+            }
+            body {
+                margin: 0;
+                padding: 0;
+            }
+            input {
+                width: 100%;
+                height: 50px;
+                font-size: 20px;
+                color: red;
+                background-color: black;
+            }
+            html {
+                background-color: black;
+            }
+        </style>
+    </head>
+    <body>
+        <form action = "/textEditor/" method = "post">
+            <input name="file_path" type="hidden" value=\""""
+        + file_path
+        # i wanna all text be in textarea
+        + """\">
+            <textarea name="file_content" rows="50" cols="500">"""
+        + file_content
+        + """</textarea>
+            <input type="submit">
+        </form>
+    </body>
+    """
+    )
+    return HTMLResponse(content=html, status_code=200)
+
+
+def musicPlayer(file_path: str):
+    # this is a simple music player
+    # with open(file_path, "rb") as f:
+    #     file_content = f.read()
+
+    html = (
+        """
+    <!DOCTYPE html> 
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>File Sharing</title>
+    </head>
+    <body>
+        <audio controls>
+            <source src=\""""
+        + file_path
+        + """\" type="audio/mpeg">
+        </audio>
+    </body>
+    """
+    )
+    return HTMLResponse(content=html, status_code=200)
+
+
+def videoPlayer(file_path: str):
+    # this is a simple video player
+    # with open(file_path, "rb
+    html = (
+        """ 
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>File Sharing</title>
+    </head> 
+    <body>
+        <video width="100%" height="100%" controls> <source src=\""""
+        + file_path
+        + """\" type="video/mp4">
+        </video>
+    </body>
+    """
+    )
+    return HTMLResponse(content=html, status_code=200)
+
+
+# @app.get("/textEditor/")
+@app.post("/textEditor/")
+async def textEditor(file_path: str = Form(...), file_content: str = Form(...)):
+    with open(file_path, "w") as f:
+        f.write(file_content)
+    back = file_path.rsplit("/", 1)[0]
+    return RedirectResponse(
+        url=f"http://{my_ip}:{my_port}{back}",
+        status_code=303,
+    )
+
+
 @app.post("/uploadfile/")
 async def create_upload_file(
     file_path: str = File(description="A file path"),
@@ -174,9 +331,7 @@ async def create_upload_file(
         file_path = file_path[1:]
     with open(file_path + "/" + file.filename, "wb") as buffer:
         buffer.write(file.file.read())
-        print(file_path + file.filename)
     url = f"http://{my_ip}:{my_port}{file_path}"
-    print(url)
     return RedirectResponse(
         url=url,
         status_code=303,
@@ -192,7 +347,21 @@ def download(file_path: str) -> StreamingResponse:
     Returns:
         StreamingResponse: file response
     """
+    # if media_type is text/plain or python file or something like that i wanna a text editor here
+    file = open(file_path, "rb")
+    return FileResponse(file_path)
+
+
+@app.get("/dl/{file_path:path}")
+def read_file_dl(file_path: str):
+    file_path = "/" + file_path
     media_type = mimetypes.guess_type(file_path)[0]
+    if media_type.startswith("text"):
+        return textEditore_template(file_path)
+    if media_type.startswith("audio"):
+        return musicPlayer(file_path)
+    if media_type.startswith("video"):
+        return videoPlayer(file_path)
     file = open(file_path, "rb")
     if os.path.getsize(file_path) > 100000000:
         return StreamingResponse(
@@ -203,13 +372,13 @@ def download(file_path: str) -> StreamingResponse:
             },
         )
     else:
-        return FileResponse(file_path, media_type=media_type)
+        return FileResponse(file_path)
 
 
 @app.get("{file_path:path}")
 def read_file(file_path: str):
     if not os.path.exists(file_path):
-        return {"status": "path not found"}
+        return {"status_code": 404}
     if not os.path.isdir(file_path):
         return download(file_path)
 
@@ -251,8 +420,4 @@ def generate_qr_code() -> None:
 if __name__ == "__main__":
     generate_qr_code()
     print("Server Started")
-    uvicorn.run(
-        app,
-        host=my_ip,
-        port=my_port,
-    )  # log_level="error")
+    uvicorn.run(app, host=my_ip, port=my_port, log_level="error")
