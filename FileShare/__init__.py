@@ -1,13 +1,13 @@
-from FileShare.utils import (
+from .utils.utils import (
     convert_file_size,
     get_files,
     IP,
     PORT,
 )
-from FileShare.templates import (
+from .templates.templates import (
     textEditore_template,
     template,
     videoPlayer,
     musicPlayer,
 )
-from FileShare.qr import generate_qr_code
+from .utils.qr import generate_qr_code

@@ -1,6 +1,5 @@
 # -------------- Imports --------------
 import os
-import sys
 import subprocess
 
 # -------------- QR code --------------
@@ -23,9 +22,8 @@ def generate_qr_code() -> None:
     if len(sys.argv) == 2:
         try:
             import qrcode
-        except:
-            print("Please install qrcode")
-            return
+        except ImportError:
+            raise BaseException("Please install qrcode: `pip install qrcode`")
         IP = subprocess.check_output(["hostname", "-I"]).decode("utf-8").split(" ")[0]
         PORT = 8000
         path = os.path.abspath(sys.argv[1])
