@@ -5,9 +5,9 @@ from inui.elements import *
 from mashare.utils.utils import conf
 from .header import header
 from .footer import footer
+from mashare import BASE_PATH
 
-
-def link_maker(path, format="show"):
+def link_maker(path, format=None):
     ip, port = conf()
     ip = f"http://{ip}:{port}/"
     if type(path) == str:
@@ -33,7 +33,7 @@ def process_path(path):
                     classs="""breadcrumb-item""",
                     data=(
                         A(
-                            href=link_maker(path[: i + 1]),
+                            href=link_maker(path[: i + 1],format='show'),
                             data=path[i],
                         ),
                     ),
@@ -353,7 +353,7 @@ def base(path: str = None):
                         Script(
                             src="""https://code.jquery.com/jquery-1.10.2.min.js""",
                         ),
-                        Script(src="./assets/js/bootstrap.min.js"),
+                        Script(src=BASE_PATH+"/assets/js/bootstrap.min.js"),
                         Script(typee="""text/javascript""", data=()),
                     )
                 ),

@@ -1,5 +1,5 @@
 from inui.elements import *
-
+from mashare import BASE_PATH
 
 def header():
     return str(
@@ -14,7 +14,7 @@ def header():
                     content="""width=device-width, initial-scale=1""",
                 ),
                 Link(
-                    href="""./assets/css/bootstrap.min.css""",
+                    href="""/assets/css/bootstrap.min.css""",
                     rel="""stylesheet""",
                 ),
                 Style(
