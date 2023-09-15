@@ -1,10 +1,190 @@
 "base"
+import os
 from inui.elements import *
 from .header import header
 from .footer import footer
+from mimetypes import guess_type
 
 
-def base(body: str = None):
+def link_maker(path, format="show"):
+    ip = "http://127.0.0.1:8000/"
+    if type(path) == str:
+        path = path.split("/")
+        path = [i for i in path if i not in ["", None]]
+        path = ["/"] + path
+
+    if format:
+        ip = ip + format
+    ip += "/"
+    return ip + "/".join([i for i in path if i != "/"])
+
+
+def process_path(path):
+    path = path.split("/")
+    path = [i for i in path if i not in ["", None]]
+    path = ["/"] + path
+    return Ol(
+        classs="""breadcrumb text-big container-p-x py-3 m-0""",
+        data=(
+            *[
+                Li(
+                    classs="""breadcrumb-item""",
+                    data=(
+                        A(
+                            href=link_maker(path[: i + 1]),
+                            data=path[i],
+                        ),
+                    ),
+                )
+                for i in range(len(path[:-1]))
+            ],
+            Li(
+                classs="""breadcrumb-item active""",
+                data=(path[-1]),
+            ),
+        ),
+    )
+
+
+def create_file(path: str):
+    if not os.path.exists(path):
+        return []
+    path = "/" + path if not path.startswith("/") else path
+    icons = {
+        "folder": "far fa-folder",
+        "text/x-python": "fab fa-python",
+        "octet-stream": "fab fa-js-square",
+        "application/css": "fab fa-css3",
+        "text/markdown": "ab fa-markdown",
+        "r": "fab fa-r-project",
+        "text/java": "fab fa-java",
+        "video": "far fa-file-video",
+        "music": "fas fa-music",
+        "photo": "fas fa-photo-video",
+        "application/pdf": "far fa-file-pdf",
+        "doc": "",
+        "ppt": "far fa-file-powerpoint",
+        "pptx": "far fa-file-powerpoint",
+        "txt": "fa fa-file-text-o",
+        "application/zip": "fa fa-file-zip-o",
+        "application/7z": "fa fa-file-zip-o",
+        "application/rar": "fa fa-file-zip-o",
+        "html": "far fa-file-code",
+        "application/octet-stream": "far fa-file",
+        "gitignore": "fa fa-file-text-o",
+    }
+    l = None
+    content_type = str(guess_type(path)[0])
+    file_format = path.rsplit(".")[0]
+    if os.path.isdir(path):
+        icon = icons["folder"]
+        l = "show"
+    elif content_type.startswith("image"):
+        icon = icons["photo"]
+        l = "photo"
+    elif content_type.startswith("audio"):
+        icon = icons["music"]
+        l = "audio"
+    elif content_type.startswith("video"):
+        icon = icons["video"]
+        l = "video"
+    elif content_type.startswith("text"):
+        icon = icons["txt"]
+        l = "text"
+    else:
+        icon = icons["application/octet-stream"]
+        l = "dl"
+    return str(
+        Div(
+            classs="""file-item""",
+            data=(
+                Div(
+                    classs="""file-item-select-bg bg-primary""",
+                ),
+                Label(
+                    classs="""file-item-checkbox custom-control custom-checkbox""",
+                    data=(
+                        Input(
+                            typee="""checkbox""",
+                            classs="""custom-control-input""",
+                        ),
+                        Span(
+                            classs="""custom-control-label""",
+                        ),
+                    ),
+                ),
+                Div(
+                    classs=f"""file-item-icon {icon} text-secondary""",
+                ),
+                A(
+                    href=f"""{link_maker(path, l)}""",
+                    classs="""file-item-name""",
+                    data=(path.split("/")[-1]),
+                ),
+                Div(
+                    classs="""file-item-changed""",
+                    data=("""02/14/2018""",),
+                ),
+                Div(
+                    classs="""file-item-actions btn-group""",
+                    data=(
+                        Button(
+                            typee="""button""",
+                            classs="""btn btn-default btn-sm rounded-pill icon-btn borderless md-btn-flat hide-arrow dropdown-toggle""",
+                            data_toggle="""dropdown""",
+                            data=(
+                                I(
+                                    classs="""ion ion-ios-more""",
+                                ),
+                            ),
+                        ),
+                        Div(
+                            classs="""dropdown-menu dropdown-menu-right""",
+                            data=(
+                                A(
+                                    classs="""dropdown-item""",
+                                    href="""javascript:void(0)""",
+                                    data=("""Rename""",),
+                                ),
+                                A(
+                                    classs="""dropdown-item""",
+                                    href="""javascript:void(0)""",
+                                    data=("""Move""",),
+                                ),
+                                A(
+                                    classs="""dropdown-item""",
+                                    href="""javascript:void(0)""",
+                                    data=("""Copy""",),
+                                ),
+                                A(
+                                    classs="""dropdown-item""",
+                                    href="""javascript:void(0)""",
+                                    data=("""Remove""",),
+                                ),
+                            ),
+                        ),
+                    ),
+                ),
+            ),
+        )
+    )
+
+
+def files(path: str):
+    path = "/" + path if path.startswith("/") else path
+    path = path[:-1] if path.endswith("/") else path
+    if not os.path.exists(path):
+        return []
+    if not os.path.isdir(path):
+        return []
+    listdir = os.listdir(path)
+    out = []
+    for i in listdir:
+        out.append(create_file(path + "/" + i))
+    return out
+
+
+def base(path: str = None):
     "base style"
     return str(
         Html(
@@ -325,33 +505,7 @@ body{margin-top:20px;}
                                 Div(
                                     classs="""container-m-nx container-m-ny bg-lightest mb-3""",
                                     data=(
-                                        Ol(
-                                            classs="""breadcrumb text-big container-p-x py-3 m-0""",
-                                            data=(
-                                                Li(
-                                                    classs="""breadcrumb-item""",
-                                                    data=(
-                                                        A(
-                                                            href="""javascript:void(0)""",
-                                                            data=("""home""",),
-                                                        ),
-                                                    ),
-                                                ),
-                                                Li(
-                                                    classs="""breadcrumb-item""",
-                                                    data=(
-                                                        A(
-                                                            href="""javascript:void(0)""",
-                                                            data=("""projects""",),
-                                                        ),
-                                                    ),
-                                                ),
-                                                Li(
-                                                    classs="""breadcrumb-item active""",
-                                                    data=("""site""",),
-                                                ),
-                                            ),
-                                        ),
+                                        process_path(path),
                                         Hr(
                                             classs="""m-0""",
                                         ),
@@ -482,1386 +636,7 @@ body{margin-top:20px;}
                                                 ),
                                             ),
                                         ),
-                                        Div(
-                                            classs="""file-item""",
-                                            data=(
-                                                Div(
-                                                    classs="""file-item-icon file-item-level-up fas fa-level-up-alt text-secondary""",
-                                                ),
-                                                A(
-                                                    href="""javascript:void(0)""",
-                                                    classs="""file-item-name""",
-                                                    data=(
-                                                        """
-..
-""",
-                                                    ),
-                                                ),
-                                            ),
-                                        ),
-                                        Div(
-                                            classs="""file-item""",
-                                            data=(
-                                                Div(
-                                                    classs="""file-item-select-bg bg-primary""",
-                                                ),
-                                                Label(
-                                                    classs="""file-item-checkbox custom-control custom-checkbox""",
-                                                    data=(
-                                                        Input(
-                                                            typee="""checkbox""",
-                                                            classs="""custom-control-input""",
-                                                        ),
-                                                        Span(
-                                                            classs="""custom-control-label""",
-                                                        ),
-                                                    ),
-                                                ),
-                                                Div(
-                                                    classs="""file-item-icon far fa-folder text-secondary""",
-                                                ),
-                                                A(
-                                                    href="""javascript:void(0)""",
-                                                    classs="""file-item-name""",
-                                                    data=(
-                                                        """
-Images
-""",
-                                                    ),
-                                                ),
-                                                Div(
-                                                    classs="""file-item-changed""",
-                                                    data=("""02/13/2018""",),
-                                                ),
-                                                Div(
-                                                    classs="""file-item-actions btn-group""",
-                                                    data=(
-                                                        Button(
-                                                            typee="""button""",
-                                                            classs="""btn btn-default btn-sm rounded-pill icon-btn borderless md-btn-flat hide-arrow dropdown-toggle""",
-                                                            data_toggle="""dropdown""",
-                                                            data=(
-                                                                I(
-                                                                    classs="""ion ion-ios-more""",
-                                                                ),
-                                                            ),
-                                                        ),
-                                                        Div(
-                                                            classs="""dropdown-menu dropdown-menu-right""",
-                                                            data=(
-                                                                A(
-                                                                    classs="""dropdown-item""",
-                                                                    href="""javascript:void(0)""",
-                                                                    data=(
-                                                                        """Rename""",
-                                                                    ),
-                                                                ),
-                                                                A(
-                                                                    classs="""dropdown-item""",
-                                                                    href="""javascript:void(0)""",
-                                                                    data=("""Move""",),
-                                                                ),
-                                                                A(
-                                                                    classs="""dropdown-item""",
-                                                                    href="""javascript:void(0)""",
-                                                                    data=("""Copy""",),
-                                                                ),
-                                                                A(
-                                                                    classs="""dropdown-item""",
-                                                                    href="""javascript:void(0)""",
-                                                                    data=(
-                                                                        """Remove""",
-                                                                    ),
-                                                                ),
-                                                            ),
-                                                        ),
-                                                    ),
-                                                ),
-                                            ),
-                                        ),
-                                        Div(
-                                            classs="""file-item""",
-                                            data=(
-                                                Div(
-                                                    classs="""file-item-select-bg bg-primary""",
-                                                ),
-                                                Label(
-                                                    classs="""file-item-checkbox custom-control custom-checkbox""",
-                                                    data=(
-                                                        Input(
-                                                            typee="""checkbox""",
-                                                            classs="""custom-control-input""",
-                                                        ),
-                                                        Span(
-                                                            classs="""custom-control-label""",
-                                                        ),
-                                                    ),
-                                                ),
-                                                Div(
-                                                    classs="""file-item-icon far fa-folder text-secondary""",
-                                                ),
-                                                A(
-                                                    href="""javascript:void(0)""",
-                                                    classs="""file-item-name""",
-                                                    data=(
-                                                        """
-Scripts
-""",
-                                                    ),
-                                                ),
-                                                Div(
-                                                    classs="""file-item-changed""",
-                                                    data=("""02/14/2018""",),
-                                                ),
-                                                Div(
-                                                    classs="""file-item-actions btn-group""",
-                                                    data=(
-                                                        Button(
-                                                            typee="""button""",
-                                                            classs="""btn btn-default btn-sm rounded-pill icon-btn borderless md-btn-flat hide-arrow dropdown-toggle""",
-                                                            data_toggle="""dropdown""",
-                                                            data=(
-                                                                I(
-                                                                    classs="""ion ion-ios-more""",
-                                                                ),
-                                                            ),
-                                                        ),
-                                                        Div(
-                                                            classs="""dropdown-menu dropdown-menu-right""",
-                                                            data=(
-                                                                A(
-                                                                    classs="""dropdown-item""",
-                                                                    href="""javascript:void(0)""",
-                                                                    data=(
-                                                                        """Rename""",
-                                                                    ),
-                                                                ),
-                                                                A(
-                                                                    classs="""dropdown-item""",
-                                                                    href="""javascript:void(0)""",
-                                                                    data=("""Move""",),
-                                                                ),
-                                                                A(
-                                                                    classs="""dropdown-item""",
-                                                                    href="""javascript:void(0)""",
-                                                                    data=("""Copy""",),
-                                                                ),
-                                                                A(
-                                                                    classs="""dropdown-item""",
-                                                                    href="""javascript:void(0)""",
-                                                                    data=(
-                                                                        """Remove""",
-                                                                    ),
-                                                                ),
-                                                            ),
-                                                        ),
-                                                    ),
-                                                ),
-                                            ),
-                                        ),
-                                        Div(
-                                            classs="""file-item""",
-                                            data=(
-                                                Div(
-                                                    classs="""file-item-select-bg bg-primary""",
-                                                ),
-                                                Label(
-                                                    classs="""file-item-checkbox custom-control custom-checkbox""",
-                                                    data=(
-                                                        Input(
-                                                            typee="""checkbox""",
-                                                            classs="""custom-control-input""",
-                                                        ),
-                                                        Span(
-                                                            classs="""custom-control-label""",
-                                                        ),
-                                                    ),
-                                                ),
-                                                Div(
-                                                    classs="""file-item-icon far fa-folder text-secondary""",
-                                                ),
-                                                A(
-                                                    href="""javascript:void(0)""",
-                                                    classs="""file-item-name""",
-                                                    data=(
-                                                        """
-Utils
-""",
-                                                    ),
-                                                ),
-                                                Div(
-                                                    classs="""file-item-changed""",
-                                                    data=("""02/15/2018""",),
-                                                ),
-                                                Div(
-                                                    classs="""file-item-actions btn-group""",
-                                                    data=(
-                                                        Button(
-                                                            typee="""button""",
-                                                            classs="""btn btn-default btn-sm rounded-pill icon-btn borderless md-btn-flat hide-arrow dropdown-toggle""",
-                                                            data_toggle="""dropdown""",
-                                                            data=(
-                                                                I(
-                                                                    classs="""ion ion-ios-more""",
-                                                                ),
-                                                            ),
-                                                        ),
-                                                        Div(
-                                                            classs="""dropdown-menu dropdown-menu-right""",
-                                                            data=(
-                                                                A(
-                                                                    classs="""dropdown-item""",
-                                                                    href="""javascript:void(0)""",
-                                                                    data=(
-                                                                        """Rename""",
-                                                                    ),
-                                                                ),
-                                                                A(
-                                                                    classs="""dropdown-item""",
-                                                                    href="""javascript:void(0)""",
-                                                                    data=("""Move""",),
-                                                                ),
-                                                                A(
-                                                                    classs="""dropdown-item""",
-                                                                    href="""javascript:void(0)""",
-                                                                    data=("""Copy""",),
-                                                                ),
-                                                                A(
-                                                                    classs="""dropdown-item""",
-                                                                    href="""javascript:void(0)""",
-                                                                    data=(
-                                                                        """Remove""",
-                                                                    ),
-                                                                ),
-                                                            ),
-                                                        ),
-                                                    ),
-                                                ),
-                                            ),
-                                        ),
-                                        Div(
-                                            classs="""file-item""",
-                                            data=(
-                                                Div(
-                                                    classs="""file-item-select-bg bg-primary""",
-                                                ),
-                                                Label(
-                                                    classs="""file-item-checkbox custom-control custom-checkbox""",
-                                                    data=(
-                                                        Input(
-                                                            typee="""checkbox""",
-                                                            classs="""custom-control-input""",
-                                                        ),
-                                                        Span(
-                                                            classs="""custom-control-label""",
-                                                        ),
-                                                    ),
-                                                ),
-                                                Div(
-                                                    classs="""file-item-icon far fa-file-archive text-secondary""",
-                                                ),
-                                                A(
-                                                    href="""javascript:void(0)""",
-                                                    classs="""file-item-name""",
-                                                    data=(
-                                                        """
-Archive.zip
-""",
-                                                    ),
-                                                ),
-                                                Div(
-                                                    classs="""file-item-changed""",
-                                                    data=("""02/16/2018""",),
-                                                ),
-                                                Div(
-                                                    classs="""file-item-actions btn-group""",
-                                                    data=(
-                                                        Button(
-                                                            typee="""button""",
-                                                            classs="""btn btn-default btn-sm rounded-pill icon-btn borderless md-btn-flat hide-arrow dropdown-toggle""",
-                                                            data_toggle="""dropdown""",
-                                                            data=(
-                                                                I(
-                                                                    classs="""ion ion-ios-more""",
-                                                                ),
-                                                            ),
-                                                        ),
-                                                        Div(
-                                                            classs="""dropdown-menu dropdown-menu-right""",
-                                                            data=(
-                                                                A(
-                                                                    classs="""dropdown-item""",
-                                                                    href="""javascript:void(0)""",
-                                                                    data=(
-                                                                        """Rename""",
-                                                                    ),
-                                                                ),
-                                                                A(
-                                                                    classs="""dropdown-item""",
-                                                                    href="""javascript:void(0)""",
-                                                                    data=("""Move""",),
-                                                                ),
-                                                                A(
-                                                                    classs="""dropdown-item""",
-                                                                    href="""javascript:void(0)""",
-                                                                    data=("""Copy""",),
-                                                                ),
-                                                                A(
-                                                                    classs="""dropdown-item""",
-                                                                    href="""javascript:void(0)""",
-                                                                    data=(
-                                                                        """Remove""",
-                                                                    ),
-                                                                ),
-                                                            ),
-                                                        ),
-                                                    ),
-                                                ),
-                                            ),
-                                        ),
-                                        Div(
-                                            classs="""file-item""",
-                                            data=(
-                                                Div(
-                                                    classs="""file-item-select-bg bg-primary""",
-                                                ),
-                                                Label(
-                                                    classs="""file-item-checkbox custom-control custom-checkbox""",
-                                                    data=(
-                                                        Input(
-                                                            typee="""checkbox""",
-                                                            classs="""custom-control-input""",
-                                                        ),
-                                                        Span(
-                                                            classs="""custom-control-label""",
-                                                        ),
-                                                    ),
-                                                ),
-                                                Div(
-                                                    classs="""file-item-icon fab fa-js text-secondary""",
-                                                ),
-                                                A(
-                                                    href="""javascript:void(0)""",
-                                                    classs="""file-item-name""",
-                                                    data=(
-                                                        """
-Build.js
-""",
-                                                    ),
-                                                ),
-                                                Div(
-                                                    classs="""file-item-changed""",
-                                                    data=("""02/17/2018""",),
-                                                ),
-                                                Div(
-                                                    classs="""file-item-actions btn-group""",
-                                                    data=(
-                                                        Button(
-                                                            typee="""button""",
-                                                            classs="""btn btn-default btn-sm rounded-pill icon-btn borderless md-btn-flat hide-arrow dropdown-toggle""",
-                                                            data_toggle="""dropdown""",
-                                                            data=(
-                                                                I(
-                                                                    classs="""ion ion-ios-more""",
-                                                                ),
-                                                            ),
-                                                        ),
-                                                        Div(
-                                                            classs="""dropdown-menu dropdown-menu-right""",
-                                                            data=(
-                                                                A(
-                                                                    classs="""dropdown-item""",
-                                                                    href="""javascript:void(0)""",
-                                                                    data=(
-                                                                        """Rename""",
-                                                                    ),
-                                                                ),
-                                                                A(
-                                                                    classs="""dropdown-item""",
-                                                                    href="""javascript:void(0)""",
-                                                                    data=("""Move""",),
-                                                                ),
-                                                                A(
-                                                                    classs="""dropdown-item""",
-                                                                    href="""javascript:void(0)""",
-                                                                    data=("""Copy""",),
-                                                                ),
-                                                                A(
-                                                                    classs="""dropdown-item""",
-                                                                    href="""javascript:void(0)""",
-                                                                    data=(
-                                                                        """Remove""",
-                                                                    ),
-                                                                ),
-                                                            ),
-                                                        ),
-                                                    ),
-                                                ),
-                                            ),
-                                        ),
-                                        Div(
-                                            classs="""file-item""",
-                                            data=(
-                                                Div(
-                                                    classs="""file-item-select-bg bg-primary""",
-                                                ),
-                                                Label(
-                                                    classs="""file-item-checkbox custom-control custom-checkbox""",
-                                                    data=(
-                                                        Input(
-                                                            typee="""checkbox""",
-                                                            classs="""custom-control-input""",
-                                                        ),
-                                                        Span(
-                                                            classs="""custom-control-label""",
-                                                        ),
-                                                    ),
-                                                ),
-                                                Div(
-                                                    classs="""file-item-icon far fa-file-word text-secondary""",
-                                                ),
-                                                A(
-                                                    href="""javascript:void(0)""",
-                                                    classs="""file-item-name""",
-                                                    data=(
-                                                        """
-Checklist.doc
-""",
-                                                    ),
-                                                ),
-                                                Div(
-                                                    classs="""file-item-changed""",
-                                                    data=("""02/18/2018""",),
-                                                ),
-                                                Div(
-                                                    classs="""file-item-actions btn-group""",
-                                                    data=(
-                                                        Button(
-                                                            typee="""button""",
-                                                            classs="""btn btn-default btn-sm rounded-pill icon-btn borderless md-btn-flat hide-arrow dropdown-toggle""",
-                                                            data_toggle="""dropdown""",
-                                                            data=(
-                                                                I(
-                                                                    classs="""ion ion-ios-more""",
-                                                                ),
-                                                            ),
-                                                        ),
-                                                        Div(
-                                                            classs="""dropdown-menu dropdown-menu-right""",
-                                                            data=(
-                                                                A(
-                                                                    classs="""dropdown-item""",
-                                                                    href="""javascript:void(0)""",
-                                                                    data=(
-                                                                        """Rename""",
-                                                                    ),
-                                                                ),
-                                                                A(
-                                                                    classs="""dropdown-item""",
-                                                                    href="""javascript:void(0)""",
-                                                                    data=("""Move""",),
-                                                                ),
-                                                                A(
-                                                                    classs="""dropdown-item""",
-                                                                    href="""javascript:void(0)""",
-                                                                    data=("""Copy""",),
-                                                                ),
-                                                                A(
-                                                                    classs="""dropdown-item""",
-                                                                    href="""javascript:void(0)""",
-                                                                    data=(
-                                                                        """Remove""",
-                                                                    ),
-                                                                ),
-                                                            ),
-                                                        ),
-                                                    ),
-                                                ),
-                                            ),
-                                        ),
-                                        Div(
-                                            classs="""file-item""",
-                                            data=(
-                                                Div(
-                                                    classs="""file-item-select-bg bg-primary""",
-                                                ),
-                                                Label(
-                                                    classs="""file-item-checkbox custom-control custom-checkbox""",
-                                                    data=(
-                                                        Input(
-                                                            typee="""checkbox""",
-                                                            classs="""custom-control-input""",
-                                                        ),
-                                                        Span(
-                                                            classs="""custom-control-label""",
-                                                        ),
-                                                    ),
-                                                ),
-                                                Div(
-                                                    classs="""file-item-icon fab fa-html5 text-secondary""",
-                                                ),
-                                                A(
-                                                    href="""javascript:void(0)""",
-                                                    classs="""file-item-name""",
-                                                    data=(
-                                                        """
-Index.html
-""",
-                                                    ),
-                                                ),
-                                                Div(
-                                                    classs="""file-item-changed""",
-                                                    data=("""02/19/2018""",),
-                                                ),
-                                                Div(
-                                                    classs="""file-item-actions btn-group""",
-                                                    data=(
-                                                        Button(
-                                                            typee="""button""",
-                                                            classs="""btn btn-default btn-sm rounded-pill icon-btn borderless md-btn-flat hide-arrow dropdown-toggle""",
-                                                            data_toggle="""dropdown""",
-                                                            data=(
-                                                                I(
-                                                                    classs="""ion ion-ios-more""",
-                                                                ),
-                                                            ),
-                                                        ),
-                                                        Div(
-                                                            classs="""dropdown-menu dropdown-menu-right""",
-                                                            data=(
-                                                                A(
-                                                                    classs="""dropdown-item""",
-                                                                    href="""javascript:void(0)""",
-                                                                    data=(
-                                                                        """Rename""",
-                                                                    ),
-                                                                ),
-                                                                A(
-                                                                    classs="""dropdown-item""",
-                                                                    href="""javascript:void(0)""",
-                                                                    data=("""Move""",),
-                                                                ),
-                                                                A(
-                                                                    classs="""dropdown-item""",
-                                                                    href="""javascript:void(0)""",
-                                                                    data=("""Copy""",),
-                                                                ),
-                                                                A(
-                                                                    classs="""dropdown-item""",
-                                                                    href="""javascript:void(0)""",
-                                                                    data=(
-                                                                        """Remove""",
-                                                                    ),
-                                                                ),
-                                                            ),
-                                                        ),
-                                                    ),
-                                                ),
-                                            ),
-                                        ),
-                                        Div(
-                                            classs="""file-item""",
-                                            data=(
-                                                Div(
-                                                    classs="""file-item-select-bg bg-primary""",
-                                                ),
-                                                Label(
-                                                    classs="""file-item-checkbox custom-control custom-checkbox""",
-                                                    data=(
-                                                        Input(
-                                                            typee="""checkbox""",
-                                                            classs="""custom-control-input""",
-                                                        ),
-                                                        Span(
-                                                            classs="""custom-control-label""",
-                                                        ),
-                                                    ),
-                                                ),
-                                                Div(
-                                                    classs="""file-item-img""",
-                                                    style="""background-image: url(https://bootdey.com/img/Content/avatar/avatar1.png);""",
-                                                ),
-                                                A(
-                                                    href="""javascript:void(0)""",
-                                                    classs="""file-item-name""",
-                                                    data=(
-                                                        """
-Image-1.jpg
-""",
-                                                    ),
-                                                ),
-                                                Div(
-                                                    classs="""file-item-changed""",
-                                                    data=("""02/20/2018""",),
-                                                ),
-                                                Div(
-                                                    classs="""file-item-actions btn-group""",
-                                                    data=(
-                                                        Button(
-                                                            typee="""button""",
-                                                            classs="""btn btn-default btn-sm rounded-pill icon-btn borderless md-btn-flat hide-arrow dropdown-toggle""",
-                                                            data_toggle="""dropdown""",
-                                                            data=(
-                                                                I(
-                                                                    classs="""ion ion-ios-more""",
-                                                                ),
-                                                            ),
-                                                        ),
-                                                        Div(
-                                                            classs="""dropdown-menu dropdown-menu-right""",
-                                                            data=(
-                                                                A(
-                                                                    classs="""dropdown-item""",
-                                                                    href="""javascript:void(0)""",
-                                                                    data=(
-                                                                        """Rename""",
-                                                                    ),
-                                                                ),
-                                                                A(
-                                                                    classs="""dropdown-item""",
-                                                                    href="""javascript:void(0)""",
-                                                                    data=("""Move""",),
-                                                                ),
-                                                                A(
-                                                                    classs="""dropdown-item""",
-                                                                    href="""javascript:void(0)""",
-                                                                    data=("""Copy""",),
-                                                                ),
-                                                                A(
-                                                                    classs="""dropdown-item""",
-                                                                    href="""javascript:void(0)""",
-                                                                    data=(
-                                                                        """Remove""",
-                                                                    ),
-                                                                ),
-                                                            ),
-                                                        ),
-                                                    ),
-                                                ),
-                                            ),
-                                        ),
-                                        Div(
-                                            classs="""file-item""",
-                                            data=(
-                                                Div(
-                                                    classs="""file-item-select-bg bg-primary""",
-                                                ),
-                                                Label(
-                                                    classs="""file-item-checkbox custom-control custom-checkbox""",
-                                                    data=(
-                                                        Input(
-                                                            typee="""checkbox""",
-                                                            classs="""custom-control-input""",
-                                                        ),
-                                                        Span(
-                                                            classs="""custom-control-label""",
-                                                        ),
-                                                    ),
-                                                ),
-                                                Div(
-                                                    classs="""file-item-img""",
-                                                    style="""background-image: url(https://bootdey.com/img/Content/avatar/avatar6.png);""",
-                                                ),
-                                                A(
-                                                    href="""javascript:void(0)""",
-                                                    classs="""file-item-name""",
-                                                    data=(
-                                                        """
-Image-2.png
-""",
-                                                    ),
-                                                ),
-                                                Div(
-                                                    classs="""file-item-changed""",
-                                                    data=("""02/21/2018""",),
-                                                ),
-                                                Div(
-                                                    classs="""file-item-actions btn-group""",
-                                                    data=(
-                                                        Button(
-                                                            typee="""button""",
-                                                            classs="""btn btn-default btn-sm rounded-pill icon-btn borderless md-btn-flat hide-arrow dropdown-toggle""",
-                                                            data_toggle="""dropdown""",
-                                                            data=(
-                                                                I(
-                                                                    classs="""ion ion-ios-more""",
-                                                                ),
-                                                            ),
-                                                        ),
-                                                        Div(
-                                                            classs="""dropdown-menu dropdown-menu-right""",
-                                                            data=(
-                                                                A(
-                                                                    classs="""dropdown-item""",
-                                                                    href="""javascript:void(0)""",
-                                                                    data=(
-                                                                        """Rename""",
-                                                                    ),
-                                                                ),
-                                                                A(
-                                                                    classs="""dropdown-item""",
-                                                                    href="""javascript:void(0)""",
-                                                                    data=("""Move""",),
-                                                                ),
-                                                                A(
-                                                                    classs="""dropdown-item""",
-                                                                    href="""javascript:void(0)""",
-                                                                    data=("""Copy""",),
-                                                                ),
-                                                                A(
-                                                                    classs="""dropdown-item""",
-                                                                    href="""javascript:void(0)""",
-                                                                    data=(
-                                                                        """Remove""",
-                                                                    ),
-                                                                ),
-                                                            ),
-                                                        ),
-                                                    ),
-                                                ),
-                                            ),
-                                        ),
-                                        Div(
-                                            classs="""file-item""",
-                                            data=(
-                                                Div(
-                                                    classs="""file-item-select-bg bg-primary""",
-                                                ),
-                                                Label(
-                                                    classs="""file-item-checkbox custom-control custom-checkbox""",
-                                                    data=(
-                                                        Input(
-                                                            typee="""checkbox""",
-                                                            classs="""custom-control-input""",
-                                                        ),
-                                                        Span(
-                                                            classs="""custom-control-label""",
-                                                        ),
-                                                    ),
-                                                ),
-                                                Div(
-                                                    classs="""file-item-img""",
-                                                    style="""background-image: url(https://bootdey.com/img/Content/avatar/avatar4.png);""",
-                                                ),
-                                                A(
-                                                    href="""javascript:void(0)""",
-                                                    classs="""file-item-name""",
-                                                    data=(
-                                                        """
-Image-3.gif
-""",
-                                                    ),
-                                                ),
-                                                Div(
-                                                    classs="""file-item-changed""",
-                                                    data=("""02/22/2018""",),
-                                                ),
-                                                Div(
-                                                    classs="""file-item-actions btn-group""",
-                                                    data=(
-                                                        Button(
-                                                            typee="""button""",
-                                                            classs="""btn btn-default btn-sm rounded-pill icon-btn borderless md-btn-flat hide-arrow dropdown-toggle""",
-                                                            data_toggle="""dropdown""",
-                                                            data=(
-                                                                I(
-                                                                    classs="""ion ion-ios-more""",
-                                                                ),
-                                                            ),
-                                                        ),
-                                                        Div(
-                                                            classs="""dropdown-menu dropdown-menu-right""",
-                                                            data=(
-                                                                A(
-                                                                    classs="""dropdown-item""",
-                                                                    href="""javascript:void(0)""",
-                                                                    data=(
-                                                                        """Rename""",
-                                                                    ),
-                                                                ),
-                                                                A(
-                                                                    classs="""dropdown-item""",
-                                                                    href="""javascript:void(0)""",
-                                                                    data=("""Move""",),
-                                                                ),
-                                                                A(
-                                                                    classs="""dropdown-item""",
-                                                                    href="""javascript:void(0)""",
-                                                                    data=("""Copy""",),
-                                                                ),
-                                                                A(
-                                                                    classs="""dropdown-item""",
-                                                                    href="""javascript:void(0)""",
-                                                                    data=(
-                                                                        """Remove""",
-                                                                    ),
-                                                                ),
-                                                            ),
-                                                        ),
-                                                    ),
-                                                ),
-                                            ),
-                                        ),
-                                        Div(
-                                            classs="""file-item""",
-                                            data=(
-                                                Div(
-                                                    classs="""file-item-select-bg bg-primary""",
-                                                ),
-                                                Label(
-                                                    classs="""file-item-checkbox custom-control custom-checkbox""",
-                                                    data=(
-                                                        Input(
-                                                            typee="""checkbox""",
-                                                            classs="""custom-control-input""",
-                                                        ),
-                                                        Span(
-                                                            classs="""custom-control-label""",
-                                                        ),
-                                                    ),
-                                                ),
-                                                Div(
-                                                    classs="""file-item-icon fab fa-js text-secondary""",
-                                                ),
-                                                A(
-                                                    href="""javascript:void(0)""",
-                                                    classs="""file-item-name""",
-                                                    data=(
-                                                        """
-Main.js
-""",
-                                                    ),
-                                                ),
-                                                Div(
-                                                    classs="""file-item-changed""",
-                                                    data=("""02/23/2018""",),
-                                                ),
-                                                Div(
-                                                    classs="""file-item-actions btn-group""",
-                                                    data=(
-                                                        Button(
-                                                            typee="""button""",
-                                                            classs="""btn btn-default btn-sm rounded-pill icon-btn borderless md-btn-flat hide-arrow dropdown-toggle""",
-                                                            data_toggle="""dropdown""",
-                                                            data=(
-                                                                I(
-                                                                    classs="""ion ion-ios-more""",
-                                                                ),
-                                                            ),
-                                                        ),
-                                                        Div(
-                                                            classs="""dropdown-menu dropdown-menu-right""",
-                                                            data=(
-                                                                A(
-                                                                    classs="""dropdown-item""",
-                                                                    href="""javascript:void(0)""",
-                                                                    data=(
-                                                                        """Rename""",
-                                                                    ),
-                                                                ),
-                                                                A(
-                                                                    classs="""dropdown-item""",
-                                                                    href="""javascript:void(0)""",
-                                                                    data=("""Move""",),
-                                                                ),
-                                                                A(
-                                                                    classs="""dropdown-item""",
-                                                                    href="""javascript:void(0)""",
-                                                                    data=("""Copy""",),
-                                                                ),
-                                                                A(
-                                                                    classs="""dropdown-item""",
-                                                                    href="""javascript:void(0)""",
-                                                                    data=(
-                                                                        """Remove""",
-                                                                    ),
-                                                                ),
-                                                            ),
-                                                        ),
-                                                    ),
-                                                ),
-                                            ),
-                                        ),
-                                        Div(
-                                            classs="""file-item""",
-                                            data=(
-                                                Div(
-                                                    classs="""file-item-select-bg bg-primary""",
-                                                ),
-                                                Label(
-                                                    classs="""file-item-checkbox custom-control custom-checkbox""",
-                                                    data=(
-                                                        Input(
-                                                            typee="""checkbox""",
-                                                            classs="""custom-control-input""",
-                                                        ),
-                                                        Span(
-                                                            classs="""custom-control-label""",
-                                                        ),
-                                                    ),
-                                                ),
-                                                Div(
-                                                    classs="""file-item-icon far fa-file text-secondary""",
-                                                ),
-                                                A(
-                                                    href="""javascript:void(0)""",
-                                                    classs="""file-item-name""",
-                                                    data=(
-                                                        """
-MAKEFILE
-""",
-                                                    ),
-                                                ),
-                                                Div(
-                                                    classs="""file-item-changed""",
-                                                    data=("""02/24/2018""",),
-                                                ),
-                                                Div(
-                                                    classs="""file-item-actions btn-group""",
-                                                    data=(
-                                                        Button(
-                                                            typee="""button""",
-                                                            classs="""btn btn-default btn-sm rounded-pill icon-btn borderless md-btn-flat hide-arrow dropdown-toggle""",
-                                                            data_toggle="""dropdown""",
-                                                            data=(
-                                                                I(
-                                                                    classs="""ion ion-ios-more""",
-                                                                ),
-                                                            ),
-                                                        ),
-                                                        Div(
-                                                            classs="""dropdown-menu dropdown-menu-right""",
-                                                            data=(
-                                                                A(
-                                                                    classs="""dropdown-item""",
-                                                                    href="""javascript:void(0)""",
-                                                                    data=(
-                                                                        """Rename""",
-                                                                    ),
-                                                                ),
-                                                                A(
-                                                                    classs="""dropdown-item""",
-                                                                    href="""javascript:void(0)""",
-                                                                    data=("""Move""",),
-                                                                ),
-                                                                A(
-                                                                    classs="""dropdown-item""",
-                                                                    href="""javascript:void(0)""",
-                                                                    data=("""Copy""",),
-                                                                ),
-                                                                A(
-                                                                    classs="""dropdown-item""",
-                                                                    href="""javascript:void(0)""",
-                                                                    data=(
-                                                                        """Remove""",
-                                                                    ),
-                                                                ),
-                                                            ),
-                                                        ),
-                                                    ),
-                                                ),
-                                            ),
-                                        ),
-                                        Div(
-                                            classs="""file-item""",
-                                            data=(
-                                                Div(
-                                                    classs="""file-item-select-bg bg-primary""",
-                                                ),
-                                                Label(
-                                                    classs="""file-item-checkbox custom-control custom-checkbox""",
-                                                    data=(
-                                                        Input(
-                                                            typee="""checkbox""",
-                                                            classs="""custom-control-input""",
-                                                        ),
-                                                        Span(
-                                                            classs="""custom-control-label""",
-                                                        ),
-                                                    ),
-                                                ),
-                                                Div(
-                                                    classs="""file-item-icon far fa-file-pdf text-secondary""",
-                                                ),
-                                                A(
-                                                    href="""javascript:void(0)""",
-                                                    classs="""file-item-name""",
-                                                    data=(
-                                                        """
-Presentation.pdf
-""",
-                                                    ),
-                                                ),
-                                                Div(
-                                                    classs="""file-item-changed""",
-                                                    data=("""02/25/2018""",),
-                                                ),
-                                                Div(
-                                                    classs="""file-item-actions btn-group""",
-                                                    data=(
-                                                        Button(
-                                                            typee="""button""",
-                                                            classs="""btn btn-default btn-sm rounded-pill icon-btn borderless md-btn-flat hide-arrow dropdown-toggle""",
-                                                            data_toggle="""dropdown""",
-                                                            data=(
-                                                                I(
-                                                                    classs="""ion ion-ios-more""",
-                                                                ),
-                                                            ),
-                                                        ),
-                                                        Div(
-                                                            classs="""dropdown-menu dropdown-menu-right""",
-                                                            data=(
-                                                                A(
-                                                                    classs="""dropdown-item""",
-                                                                    href="""javascript:void(0)""",
-                                                                    data=(
-                                                                        """Rename""",
-                                                                    ),
-                                                                ),
-                                                                A(
-                                                                    classs="""dropdown-item""",
-                                                                    href="""javascript:void(0)""",
-                                                                    data=("""Move""",),
-                                                                ),
-                                                                A(
-                                                                    classs="""dropdown-item""",
-                                                                    href="""javascript:void(0)""",
-                                                                    data=("""Copy""",),
-                                                                ),
-                                                                A(
-                                                                    classs="""dropdown-item""",
-                                                                    href="""javascript:void(0)""",
-                                                                    data=(
-                                                                        """Remove""",
-                                                                    ),
-                                                                ),
-                                                            ),
-                                                        ),
-                                                    ),
-                                                ),
-                                            ),
-                                        ),
-                                        Div(
-                                            classs="""file-item""",
-                                            data=(
-                                                Div(
-                                                    classs="""file-item-select-bg bg-primary""",
-                                                ),
-                                                Label(
-                                                    classs="""file-item-checkbox custom-control custom-checkbox""",
-                                                    data=(
-                                                        Input(
-                                                            typee="""checkbox""",
-                                                            classs="""custom-control-input""",
-                                                        ),
-                                                        Span(
-                                                            classs="""custom-control-label""",
-                                                        ),
-                                                    ),
-                                                ),
-                                                Div(
-                                                    classs="""file-item-icon far fa-file-alt text-secondary""",
-                                                ),
-                                                A(
-                                                    href="""javascript:void(0)""",
-                                                    classs="""file-item-name""",
-                                                    data=(
-                                                        """
-README.txt
-""",
-                                                    ),
-                                                ),
-                                                Div(
-                                                    classs="""file-item-changed""",
-                                                    data=("""02/26/2018""",),
-                                                ),
-                                                Div(
-                                                    classs="""file-item-actions btn-group""",
-                                                    data=(
-                                                        Button(
-                                                            typee="""button""",
-                                                            classs="""btn btn-default btn-sm rounded-pill icon-btn borderless md-btn-flat hide-arrow dropdown-toggle""",
-                                                            data_toggle="""dropdown""",
-                                                            data=(
-                                                                I(
-                                                                    classs="""ion ion-ios-more""",
-                                                                ),
-                                                            ),
-                                                        ),
-                                                        Div(
-                                                            classs="""dropdown-menu dropdown-menu-right""",
-                                                            data=(
-                                                                A(
-                                                                    classs="""dropdown-item""",
-                                                                    href="""javascript:void(0)""",
-                                                                    data=(
-                                                                        """Rename""",
-                                                                    ),
-                                                                ),
-                                                                A(
-                                                                    classs="""dropdown-item""",
-                                                                    href="""javascript:void(0)""",
-                                                                    data=("""Move""",),
-                                                                ),
-                                                                A(
-                                                                    classs="""dropdown-item""",
-                                                                    href="""javascript:void(0)""",
-                                                                    data=("""Copy""",),
-                                                                ),
-                                                                A(
-                                                                    classs="""dropdown-item""",
-                                                                    href="""javascript:void(0)""",
-                                                                    data=(
-                                                                        """Remove""",
-                                                                    ),
-                                                                ),
-                                                            ),
-                                                        ),
-                                                    ),
-                                                ),
-                                            ),
-                                        ),
-                                        Div(
-                                            classs="""file-item""",
-                                            data=(
-                                                Div(
-                                                    classs="""file-item-select-bg bg-primary""",
-                                                ),
-                                                Label(
-                                                    classs="""file-item-checkbox custom-control custom-checkbox""",
-                                                    data=(
-                                                        Input(
-                                                            typee="""checkbox""",
-                                                            classs="""custom-control-input""",
-                                                        ),
-                                                        Span(
-                                                            classs="""custom-control-label""",
-                                                        ),
-                                                    ),
-                                                ),
-                                                Div(
-                                                    classs="""file-item-icon fab fa-css3 text-secondary""",
-                                                ),
-                                                A(
-                                                    href="""javascript:void(0)""",
-                                                    classs="""file-item-name""",
-                                                    data=(
-                                                        """
-Style.css
-""",
-                                                    ),
-                                                ),
-                                                Div(
-                                                    classs="""file-item-changed""",
-                                                    data=("""02/27/2018""",),
-                                                ),
-                                                Div(
-                                                    classs="""file-item-actions btn-group""",
-                                                    data=(
-                                                        Button(
-                                                            typee="""button""",
-                                                            classs="""btn btn-default btn-sm rounded-pill icon-btn borderless md-btn-flat hide-arrow dropdown-toggle""",
-                                                            data_toggle="""dropdown""",
-                                                            data=(
-                                                                I(
-                                                                    classs="""ion ion-ios-more""",
-                                                                ),
-                                                            ),
-                                                        ),
-                                                        Div(
-                                                            classs="""dropdown-menu dropdown-menu-right""",
-                                                            data=(
-                                                                A(
-                                                                    classs="""dropdown-item""",
-                                                                    href="""javascript:void(0)""",
-                                                                    data=(
-                                                                        """Rename""",
-                                                                    ),
-                                                                ),
-                                                                A(
-                                                                    classs="""dropdown-item""",
-                                                                    href="""javascript:void(0)""",
-                                                                    data=("""Move""",),
-                                                                ),
-                                                                A(
-                                                                    classs="""dropdown-item""",
-                                                                    href="""javascript:void(0)""",
-                                                                    data=("""Copy""",),
-                                                                ),
-                                                                A(
-                                                                    classs="""dropdown-item""",
-                                                                    href="""javascript:void(0)""",
-                                                                    data=(
-                                                                        """Remove""",
-                                                                    ),
-                                                                ),
-                                                            ),
-                                                        ),
-                                                    ),
-                                                ),
-                                            ),
-                                        ),
-                                        Div(
-                                            classs="""file-item""",
-                                            data=(
-                                                Div(
-                                                    classs="""file-item-select-bg bg-primary""",
-                                                ),
-                                                Label(
-                                                    classs="""file-item-checkbox custom-control custom-checkbox""",
-                                                    data=(
-                                                        Input(
-                                                            typee="""checkbox""",
-                                                            classs="""custom-control-input""",
-                                                        ),
-                                                        Span(
-                                                            classs="""custom-control-label""",
-                                                        ),
-                                                    ),
-                                                ),
-                                                Div(
-                                                    classs="""file-item-icon far fa-file-audio text-secondary""",
-                                                ),
-                                                A(
-                                                    href="""javascript:void(0)""",
-                                                    classs="""file-item-name""",
-                                                    data=(
-                                                        """
-Test.mp3
-""",
-                                                    ),
-                                                ),
-                                                Div(
-                                                    classs="""file-item-changed""",
-                                                    data=("""02/28/2018""",),
-                                                ),
-                                                Div(
-                                                    classs="""file-item-actions btn-group""",
-                                                    data=(
-                                                        Button(
-                                                            typee="""button""",
-                                                            classs="""btn btn-default btn-sm rounded-pill icon-btn borderless md-btn-flat hide-arrow dropdown-toggle""",
-                                                            data_toggle="""dropdown""",
-                                                            data=(
-                                                                I(
-                                                                    classs="""ion ion-ios-more""",
-                                                                ),
-                                                            ),
-                                                        ),
-                                                        Div(
-                                                            classs="""dropdown-menu dropdown-menu-right""",
-                                                            data=(
-                                                                A(
-                                                                    classs="""dropdown-item""",
-                                                                    href="""javascript:void(0)""",
-                                                                    data=(
-                                                                        """Rename""",
-                                                                    ),
-                                                                ),
-                                                                A(
-                                                                    classs="""dropdown-item""",
-                                                                    href="""javascript:void(0)""",
-                                                                    data=("""Move""",),
-                                                                ),
-                                                                A(
-                                                                    classs="""dropdown-item""",
-                                                                    href="""javascript:void(0)""",
-                                                                    data=("""Copy""",),
-                                                                ),
-                                                                A(
-                                                                    classs="""dropdown-item""",
-                                                                    href="""javascript:void(0)""",
-                                                                    data=(
-                                                                        """Remove""",
-                                                                    ),
-                                                                ),
-                                                            ),
-                                                        ),
-                                                    ),
-                                                ),
-                                            ),
-                                        ),
-                                        Div(
-                                            classs="""file-item""",
-                                            data=(
-                                                Div(
-                                                    classs="""file-item-select-bg bg-primary""",
-                                                ),
-                                                Label(
-                                                    classs="""file-item-checkbox custom-control custom-checkbox""",
-                                                    data=(
-                                                        Input(
-                                                            typee="""checkbox""",
-                                                            classs="""custom-control-input""",
-                                                        ),
-                                                        Span(
-                                                            classs="""custom-control-label""",
-                                                        ),
-                                                    ),
-                                                ),
-                                                Div(
-                                                    classs="""file-item-icon far fa-file-video text-secondary""",
-                                                ),
-                                                A(
-                                                    href="""javascript:void(0)""",
-                                                    classs="""file-item-name""",
-                                                    data=(
-                                                        """
-Tutorial.avi
-""",
-                                                    ),
-                                                ),
-                                                Div(
-                                                    classs="""file-item-changed""",
-                                                    data=("""03/01/2018""",),
-                                                ),
-                                                Div(
-                                                    classs="""file-item-actions btn-group""",
-                                                    data=(
-                                                        Button(
-                                                            typee="""button""",
-                                                            classs="""btn btn-default btn-sm rounded-pill icon-btn borderless md-btn-flat hide-arrow dropdown-toggle""",
-                                                            data_toggle="""dropdown""",
-                                                            data=(
-                                                                I(
-                                                                    classs="""ion ion-ios-more""",
-                                                                ),
-                                                            ),
-                                                        ),
-                                                        Div(
-                                                            classs="""dropdown-menu dropdown-menu-right""",
-                                                            data=(
-                                                                A(
-                                                                    classs="""dropdown-item""",
-                                                                    href="""javascript:void(0)""",
-                                                                    data=(
-                                                                        """Rename""",
-                                                                    ),
-                                                                ),
-                                                                A(
-                                                                    classs="""dropdown-item""",
-                                                                    href="""javascript:void(0)""",
-                                                                    data=("""Move""",),
-                                                                ),
-                                                                A(
-                                                                    classs="""dropdown-item""",
-                                                                    href="""javascript:void(0)""",
-                                                                    data=("""Copy""",),
-                                                                ),
-                                                                A(
-                                                                    classs="""dropdown-item""",
-                                                                    href="""javascript:void(0)""",
-                                                                    data=(
-                                                                        """Remove""",
-                                                                    ),
-                                                                ),
-                                                            ),
-                                                        ),
-                                                    ),
-                                                ),
-                                            ),
-                                        ),
+                                        *files(path),
                                     ),
                                 ),
                             ),
@@ -1869,9 +644,7 @@ Tutorial.avi
                         Script(
                             src="""https://code.jquery.com/jquery-1.10.2.min.js""",
                         ),
-                        Script(
-                            src="./assets/js/bootstrap.min.js"
-                        ),
+                        Script(src="./assets/js/bootstrap.min.js"),
                         Script(typee="""text/javascript""", data=()),
                     )
                 ),
