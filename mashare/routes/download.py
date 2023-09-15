@@ -7,7 +7,7 @@ from fastapi import APIRouter
 from fastapi.responses import StreamingResponse, FileResponse
 
 router = APIRouter(
-    prefix="/dl/",
+    prefix="/dl",
     tags="Download",
     default_response_class={404: {"message": "not found"}},
 )
