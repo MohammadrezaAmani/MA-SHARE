@@ -1,11 +1,9 @@
 # get IP address
 from mashare import get_files
-from fastapi.responses import HTMLResponse
-from mashare import IP, PORT
 
 
 # ------------- Templates -------------
-def template(file_path: str, sorting: int = 0) -> HTMLResponse:
+def template(file_path: str, sorting: int = 0):
     """generate html template
 
     Args:
@@ -149,7 +147,7 @@ def template(file_path: str, sorting: int = 0) -> HTMLResponse:
     return HTMLResponse(content=html, status_code=200)
 
 
-def textEditore_template(file_path: str) -> HTMLResponse:
+def textEditore_template(file_path: str):
     """generate html template for text editor
 
     Args:
@@ -216,7 +214,7 @@ def textEditore_template(file_path: str) -> HTMLResponse:
     return HTMLResponse(content=html, status_code=200)
 
 
-def musicPlayer(file_path: str) -> HTMLResponse:
+def musicPlayer(file_path: str):
     """generate html template for music player
 
     Args:
@@ -247,7 +245,7 @@ def musicPlayer(file_path: str) -> HTMLResponse:
     return HTMLResponse(content=html, status_code=200)
 
 
-def videoPlayer(file_path: str) -> HTMLResponse:
+def videoPlayer(file_path: str):
     """generate html template for video player
 
     Args:
