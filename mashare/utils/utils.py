@@ -3,6 +3,7 @@ import os
 import mimetypes
 import datetime
 
+
 # ------------- Functions -------------
 def convert_file_size(file_size: int) -> str:
     """convert file size to human readable format
@@ -55,6 +56,8 @@ def get_files(path: str) -> dict:
 
 import subprocess
 
-# get IP address
-IP = subprocess.check_output(["hostname", "-I"]).decode("utf-8").split(" ")[0]
-PORT = 8000
+
+def conf():
+    ip = subprocess.check_output(["hostname", "-I"]).decode("utf-8").split(" ")[0]
+    port = 8080
+    return ip, port

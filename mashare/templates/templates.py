@@ -1,7 +1,8 @@
 # get IP address
-from FileShare import get_files
+from mashare import get_files
 from fastapi.responses import HTMLResponse
-from FileShare import IP, PORT
+from mashare import IP, PORT
+
 
 # ------------- Templates -------------
 def template(file_path: str, sorting: int = 0) -> HTMLResponse:
@@ -65,7 +66,6 @@ def template(file_path: str, sorting: int = 0) -> HTMLResponse:
             )
 
         else:
-
             path = f"http://{IP}:{PORT}" + details[i]["path"]
             table += (
                 f"""
