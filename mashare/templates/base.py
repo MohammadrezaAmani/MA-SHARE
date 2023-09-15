@@ -1870,7 +1870,7 @@ Tutorial.avi
                             src="""https://code.jquery.com/jquery-1.10.2.min.js""",
                         ),
                         Script(
-                            src="./assets/js/bootstrap.js"
+                            src="./assets/js/bootstrap.min.js"
                         ),
                         Script(typee="""text/javascript""", data=()),
                     )
