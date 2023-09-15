@@ -13,8 +13,7 @@ router = APIRouter(
 )
 
 
-# show file: text, music, video
-@router.get("/dl/{file_path:path}")
+@router.get("/{file_path:path}")
 async def read_file_dl(file_path: str):
     "for downloading files"
     file_path = "/" + file_path
