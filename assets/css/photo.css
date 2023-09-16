@@ -1,4 +1,6 @@
-audio {
+/* image must get max 80% of screen width and place on the center  */
+
+img {
     max-width: 80%;
     margin: 10 auto;
     display: block;

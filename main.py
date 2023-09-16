@@ -10,6 +10,7 @@ from mashare.routes.music import router as musicrouter
 
 from mashare.routes.mainrouter import router as mainrouter
 from mashare.routes.video import router as videorouter
+from mashare.routes.photo import router as photorouter
 
 # from mashare.routes.rf import router as videorouter
 
@@ -22,6 +23,7 @@ app.mount("/assets", StaticFiles(directory="assets"), name="assets")
 app.include_router(downloadrouter)
 app.include_router(videorouter)
 app.include_router(musicrouter)
+app.include_router(photorouter)
 # app.rout
 # app.include_router(uploadrouter)
 app.include_router(editrouter)
