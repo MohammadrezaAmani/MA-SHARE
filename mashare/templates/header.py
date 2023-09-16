@@ -9,7 +9,7 @@ def header(style=None, script=None):
                 Meta(
                     charset="""utf-8""",
                 ),
-                Title(data=("""check file manager - Bootdey.com""",)),
+                Title(data=("""MA SHARE""",)),
                 Meta(
                     name="""viewport""",
                     content="""width=device-width, initial-scale=1""",

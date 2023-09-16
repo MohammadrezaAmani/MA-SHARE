@@ -6,7 +6,7 @@ from .utils import process_path, files
 def file_table(path: str = None):
     return str(
         base(
-            Div(
+            Div( 
                 data=(
                     Div(
                         data=(
@@ -142,5 +142,6 @@ def file_table(path: str = None):
                 )
             ),
             path=path,
+            style='/assets/css/home.css'
         )
     )
