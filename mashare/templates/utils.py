@@ -4,6 +4,7 @@ from inui.elements import *
 from mashare.utils.utils import conf
 from threading import Thread
 
+
 def link_maker(path, format=None):
     ip, port = conf()
     ip = f"http://{ip}:{port}/"
@@ -168,12 +169,15 @@ def create_file(path: str):
         )
     )
 
+
 from concurrent.futures import ThreadPoolExecutor
+
 
 def create_file_threaded(path, out):
     file_data = create_file(path)
     out.append(file_data)
-    
+
+
 def files(path: str):
     path = "/" + path if path.startswith("/") else path
     path = path[:-1] if path.endswith("/") else path

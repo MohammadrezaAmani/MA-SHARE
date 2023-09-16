@@ -8,6 +8,7 @@ from fastapi.staticfiles import StaticFiles
 from mashare.templates.file_table import file_table
 from mashare import BASE_PATH
 from mashare.data import cache
+
 router = APIRouter(
     prefix="/show",
     tags=["show"],
@@ -19,9 +20,9 @@ router.mount(BASE_PATH + "/assets", StaticFiles(directory="assets"), name="asset
 @router.get("/{file_path:path}")
 async def main_router(file_path: str):
     "main router"
-    cached_html = cache.check('/'+file_path)
+    cached_html = cache.check("/" + file_path)
     if cached_html:
         return HTMLResponse(cached_html)
-    html = file_table('/'+file_path)
-    cache.add('/'+file_path, html)
+    html = file_table("/" + file_path)
+    cache.add("/" + file_path, html)
     return HTMLResponse(html)

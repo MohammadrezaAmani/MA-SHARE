@@ -14,7 +14,8 @@ def music(path: str):
             <button id="stop">Stop</button>
         </div>
     </div>
-    <script src="/assets/js/music.js"></script>"""%link_maker(path=path,format="dl"),
+    <script src="/assets/js/music.js"></script>"""
+            % link_maker(path=path, format="dl"),
             path=path,
         ),
     )
