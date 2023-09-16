@@ -23,7 +23,13 @@ def file_table(path: str = None):
                                                         classs="""ion ion-md-cloud-upload""",
                                                     ),
                                                 ),
+                                                id = """upload""",
                                             ),
+                                            f"""<form action="/upload{path}" method="post" enctype="multipart/form-data">
+    <input type="file" name="name" multiple="multiple"><br><br>
+    <br>
+    <input type="submit" value="Submit">
+ </form>""",
                                             Button(
                                                 typee="""button""",
                                                 classs="""btn btn-secondary icon-btn mr-2""",
@@ -33,6 +39,7 @@ def file_table(path: str = None):
                                                         classs="""ion ion-md-cloud-download""",
                                                     ),
                                                 ),
+                                                id= """file-manager-download-btn""",
                                             ),
                                             Div(
                                                 classs="""btn-group mr-2""",
@@ -139,6 +146,12 @@ def file_table(path: str = None):
                     ),
                     Script(src="/assets/js/bootstrap.min.js"),
                     Script(typee="""text/javascript""", data=()),
+                    # upload script for upload button, it will open multiple file upload dialog and post them to /upload/{path}
+                    Script("""
+
+
+                    
+                           """)
                 )
             ),
             path=path,

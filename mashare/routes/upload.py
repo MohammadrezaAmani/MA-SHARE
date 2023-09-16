@@ -1,31 +1,32 @@
 """
 include download routes
 """
-from fastapi import APIRouter, UploadFile
+import os
+import shutil
+from fastapi import APIRouter, UploadFile, File
 from fastapi.responses import RedirectResponse
-from fastapi import File
-from mashare.utils.utils import conf
-
+from mashare.templates.utils import link_maker
 router = APIRouter(
     prefix="/upload",
-    tags="upload",
+    tags=["upload"],
     default_response_class={404: {"message": "not found"}},
 )
 
 
+
 @router.post("/{file_path:path}")
-async def create_upload_file(
-    file_path: str = File(description="A file path"),
-    file: UploadFile = File(description="A file read as UploadFile"),
-):
-    "upload files to computer"
-    if file_path.startswith("//"):
-        file_path = file_path[1:]
-    with open(file_path + "/" + file.filename, "wb") as buffer:
-        ip, port = conf()
-        buffer.write(file.file.read())
-    url = f"http://{ip}:{port}{file_path}"
-    return RedirectResponse(
-        url=url,
-        status_code=303,
-    )
+async def create_upload_files(file_path: str, files):
+    "to handle uploaded files"
+    file_path = '/' + file_path
+    print(file_path)
+    if not os.path.exists(file_path):
+        os.makedirs(file_path)
+
+    for file in files:
+        dest = os.path.join(file_path, file.filename)
+        print(dest)
+
+        with open(dest, "wb") as buffer:
+            shutil.copyfileobj(file.file, buffer)
+
+    return RedirectResponse(url=link_maker(file_path,'show'), status_code=303)
