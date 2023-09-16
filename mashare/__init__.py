@@ -1,1 +1,1 @@
-BASE_PATH =  '/'.join(str(__file__).split('/')[:-1])
+BASE_PATH = "/".join(str(__file__).split("/")[:-1])

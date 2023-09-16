@@ -1,0 +1,110 @@
+from inui.elements import *
+from inui.svg import *
+
+Html(
+    lang="""en""",
+    data=(
+        Head(
+            data=(
+                Meta(
+                    charset="""UTF-8""",
+                ),
+                Meta(
+                    name="""viewport""",
+                    content="""width=device-width, initial-scale=1.0""",
+                ),
+                Link(
+                    rel="""stylesheet""",
+                    href="""style.css""",
+                ),
+                Link(
+                    rel="""stylesheet""",
+                    href="""https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css""",
+                ),
+                Title(data=("""Music Player""",)),
+            )
+        ),
+        Body(
+            data=(
+                H1(data=("""Music Player""",)),
+                Div(
+                    classs="""music-container""",
+                    id="""music-container""",
+                    data=(
+                        Div(
+                            classs="""music-info""",
+                            data=(
+                                H4(
+                                    classs="""title""",
+                                    id="""title""",
+                                ),
+                                Div(
+                                    classs="""progress-container""",
+                                    id="""progress-container""",
+                                    data=(
+                                        Div(
+                                            classs="""progress""",
+                                            id="""progress""",
+                                        ),
+                                    ),
+                                ),
+                            ),
+                        ),
+                        Audio(
+                            src="""./music/happyrock.mp3""",
+                            id="""audio""",
+                        ),
+                        Div(
+                            classs="""img-container""",
+                            data=(
+                                Img(
+                                    src="""./images/happyrock.jpg""",
+                                    alt="""music-cover""",
+                                    id="""cover""",
+                                ),
+                            ),
+                        ),
+                        Div(
+                            classs="""navigation""",
+                            data=(
+                                Button(
+                                    id="""prev""",
+                                    classs="""action-btn""",
+                                    data=(
+                                        I(
+                                            classs="""fa fa-backward""",
+                                            aria_hidden="""true""",
+                                        ),
+                                    ),
+                                ),
+                                Button(
+                                    id="""play""",
+                                    classs="""action-btn action-btn-big""",
+                                    data=(
+                                        I(
+                                            classs="""fa fa-play""",
+                                            aria_hidden="""true""",
+                                        ),
+                                    ),
+                                ),
+                                Button(
+                                    id="""next""",
+                                    classs="""action-btn""",
+                                    data=(
+                                        I(
+                                            classs="""fa fa-forward""",
+                                            aria_hidden="""true""",
+                                        ),
+                                    ),
+                                ),
+                            ),
+                        ),
+                    ),
+                ),
+                Script(
+                    src="""script.js""",
+                ),
+            )
+        ),
+    ),
+)
