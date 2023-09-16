@@ -2,12 +2,14 @@ from inui.elements import *
 from .base import base
 
 
-def text_editor(path,text=None):
+def text_editor(path, text=None):
     return str(
         base(
             str(
-                Div( classs="container",id='screen',
-                    data = (
+                Div(
+                    classs="container",
+                    id="screen",
+                    data=(
                         Div(
                             classs="""editor-container""",
                             data=(
@@ -39,7 +41,7 @@ def text_editor(path,text=None):
                         Script(
                             src="""/assets/js/text.js""",
                         ),
-                    )
+                    ),
                 )
             ),
             path=path,
