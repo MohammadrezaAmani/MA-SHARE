@@ -1,1 +1,1 @@
-![masharevideo](assets/media/ma-shaare.gif)
+![masharevideo](./assets/media/ma-shaare.gif)
