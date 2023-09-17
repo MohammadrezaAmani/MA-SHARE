@@ -37,7 +37,6 @@
     <h1>Masher - Your Ultimate File Sharing and Management Solution</h1>
     <p><strong>Masher</strong> is the game-changing multi-purpose software you've been waiting for, designed to streamline and elevate your file-sharing, file management, and content display experience across devices on your network. This powerful tool transforms your device into a versatile file hub that seamlessly bridges the gap between your devices, offering a wide array of features and functionalities that will revolutionize the way you interact with your files.</p>
 
-    <!-- Feature 1 -->
     <div class="feature">
         <h2>1. Effortless File Sharing and Management</h2>
         <p>Masher simplifies the complex world of file sharing and management. Easily share and manage your files across devices on your network with an intuitive and user-friendly interface. Whether you need to transfer files between your laptop, desktop, or smartphone, Masher has got you covered.</p>
@@ -51,49 +50,49 @@
         <img src="https://via.placeholder.com/400x200" alt="Feature 2 Image">
     </div>
 
-    <!-- Feature 3 -->
+    
     <div class="feature">
         <h2>3. Interactive File Browsing</h2>
         <p>Browse your shared files with ease using Masher's built-in file browser. Navigate through your files and directories as if you were accessing them directly on your device. No need to download files before viewing them.</p>
         <img src="https://via.placeholder.com/400x200" alt="Feature 3 Image">
     </div>
 
-    <!-- Feature 4 -->
+   
     <div class="feature">
         <h2>4. Media Playback Without Download</h2>
         <p>Experience the joy of streaming online music and movies directly from your shared files, without the need to download them first. Masher supports a wide range of media formats, ensuring a seamless and uninterrupted entertainment experience.</p>
         <img src="https://via.placeholder.com/400x200" alt="Feature 4 Image">
     </div>
 
-    <!-- Feature 5 -->
+    
     <div class="feature">
         <h2>5. Edit Text Files and Code</h2>
         <p>Masher's versatile functionality extends to text files and code editing. Make quick edits or collaborate on coding projects in real-time without the hassle of downloading files. Boost productivity and streamline your workflow effortlessly.</p>
         <img src="https://via.placeholder.com/400x200" alt="Feature 5 Image">
     </div>
 
-    <!-- Feature 6 -->
+    
     <div class="feature">
         <h2>6. Web-Based Terminal</h2>
         <p>Masher doesn't stop at file sharing and media playback. It also provides you with a fully interactive web-based terminal. Enjoy the convenience of accessing a terminal environment right from your browser, opening up a world of possibilities for advanced users.</p>
         <img src="https://via.placeholder.com/400x200" alt="Feature 6 Image">
     </div>
 
-    <!-- Feature 7 -->
+    
     <div class="feature">
         <h2>7. User-Friendly Interface</h2>
         <p>Masher is designed with user convenience in mind. Its sleek and intuitive interface ensures that users of all technical backgrounds can harness its full potential without a steep learning curve.</p>
         <img src="https://via.placeholder.com/400x200" alt="Feature 7 Image">
     </div>
 
-    <!-- Feature 8 -->
+    
     <div class="feature">
         <h2>8. Security and Privacy</h2>
         <p>Your data security and privacy are our top priorities. Masher employs robust security measures to ensure that your files and personal information are protected at all times.</p>
         <img src="https://via.placeholder.com/400x200" alt="Feature 8 Image">
     </div>
 
-    <!-- Feature 9 -->
+    
     <div class="feature">
         <h2>9. Cross-Platform Compatibility</h2>
         <p>Masher is cross-platform, making it compatible with Windows, macOS, Linux, Android, and iOS. Enjoy a seamless experience across all your devices.</p>
