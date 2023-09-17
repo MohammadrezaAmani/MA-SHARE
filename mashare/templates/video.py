@@ -1,4 +1,4 @@
-from inui.elements import Div, Video, Button, I, Script
+from inui.elements import Div, Video, Button, I, Script, Span
 from .base import base
 
 
@@ -6,7 +6,7 @@ def video_player(path):
     return str(
         base(
             str(
-                Div(
+                Span(
                     classs="""container""",
                     data=(
                         Video(

@@ -52,12 +52,12 @@ def create_file(path: str):
     path = "/" + path if not path.startswith("/") else path
     icons = {
         "folder": "far fa-folder",
-        "text/x-python": "fab fa-python",
-        "octet-stream": "fab fa-js-square",
-        "application/css": "fab fa-css3",
-        "text/markdown": "ab fa-markdown",
-        "r": "fab fa-r-project",
-        "text/java": "fab fa-java",
+        "text/x-python": "fa-brands fa-python",
+        "octet-stream": "fa-brands fa-js-square",
+        "application/css": "fa-brands fa-css3",
+        "text/markdown": "fa-brands fa-markdown",
+        "r": "fa-brands fa-r-project",
+        "java": "fa-brands fa-java",
         "video": "far fa-file-video",
         "music": "fas fa-music",
         "photo": "fas fa-photo-video",
@@ -69,9 +69,11 @@ def create_file(path: str):
         "application/zip": "fa fa-file-zip-o",
         "application/7z": "fa fa-file-zip-o",
         "application/rar": "fa fa-file-zip-o",
-        "html": "far fa-file-code",
+        "html": "fa-brands fa-html5",
         "application/octet-stream": "far fa-file",
         "gitignore": "fa fa-file-text-o",
+        "js":'fa-brands fa-square-js',
+        
     }
     l = None
     content_type = str(guess_type(path)[0])
@@ -88,6 +90,18 @@ def create_file(path: str):
     elif content_type.startswith("video"):
         icon = icons["video"]
         l = "video"
+    elif file_format == "ms":
+        icon = icons["text/markdown"]
+        l = "text"
+    elif file_format == "js":
+        icon = icons["js"]
+        l = "text"
+    elif file_format == "java":
+        icon = icons["java"]
+        l = "text"
+    elif content_type.endswith('python'):
+        icon = icons["text/x-python"]
+        l = "text"
     elif content_type.startswith("text"):
         icon = icons["txt"]
         l = "text"

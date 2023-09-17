@@ -6,9 +6,9 @@ from .utils import process_path, files
 def file_table(path: str = None):
     return str(
         base(
-            Div( 
+            Span( 
                 data=(
-                    Div(
+                    Span(
                         data=(
                             Div(
                                 classs="""file-manager-actions container-p-x py-2""",
@@ -25,11 +25,11 @@ def file_table(path: str = None):
                                                 ),
                                                 id = """upload""",
                                             ),
-                                            f"""<form action="/upload{path}" method="post" enctype="multipart/form-data">
-    <input type="file" name="name" multiple="multiple"><br><br>
-    <br>
-    <input type="submit" value="Submit">
- </form>""",
+#                                             f"""<form action="/upload{path}" method="post" enctype="multipart/form-data">
+#     <input type="file" name="name" multiple="multiple"><br><br>
+#     <br>
+#     <input type="submit" value="Submit">
+#  </form>""",
                                             Button(
                                                 typee="""button""",
                                                 classs="""btn btn-secondary icon-btn mr-2""",
@@ -141,9 +141,9 @@ def file_table(path: str = None):
                             *files(path),
                         ),
                     ),
-                    Script(
-                        src="""https://code.jquery.com/jquery-1.10.2.min.js""",
-                    ),
+                    # Script(
+                    #     src="""https://code.jquery.com/jquery-1.10.2.min.js""",
+                    # ),
                     Script(src="/assets/js/bootstrap.min.js"),
                     Script(typee="""text/javascript""", data=()),
                     # upload script for upload button, it will open multiple file upload dialog and post them to /upload/{path}
