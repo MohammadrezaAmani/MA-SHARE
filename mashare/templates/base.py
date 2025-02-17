@@ -1,5 +1,7 @@
 "base"
-from inui.elements import Html, Body, Link, Div, Script, Hr
+
+from inui.elements import Body, Div, Hr, Html, Link, Script
+
 from .header import header
 from .utils import process_path
 
@@ -37,13 +39,11 @@ def base(body, path=None, style=None, script=None):
                                             Hr(
                                                 classs="""m-0""",
                                             ),
-                                            
                                         ),
                                     ),
                                     body,
                                 ),
                             ),
-                            
                             # Script(
                             #     src="""https://code.jquery.com/jquery-1.10.2.min.js""",
                             # ),

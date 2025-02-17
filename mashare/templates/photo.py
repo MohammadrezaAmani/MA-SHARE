@@ -1,4 +1,5 @@
 from inui.elements import Img
+
 from .base import base
 from .utils import link_maker
 
@@ -12,6 +13,6 @@ def photo(path: str):
                 )
             ),
             path=path,
-            style='/assets/css/photo.css'
+            style="/assets/css/photo.css",
         )
     )

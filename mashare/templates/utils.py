@@ -1,14 +1,16 @@
 import os
+from concurrent.futures import ThreadPoolExecutor
 from mimetypes import guess_type
-from inui.elements import *
+
+from inui.elements import A, Button, Div, I, Input, Label, Li, Ol, Span
+
 from mashare.utils.utils import conf
-from threading import Thread
 
 
 def link_maker(path, format=None):
     ip, port = conf()
     ip = f"http://{ip}:{port}/"
-    if type(path) == str:
+    if isinstance(path, str):
         path = path.split("/")
         path = [i for i in path if i not in ["", None]]
         path = ["/"] + path
@@ -19,7 +21,7 @@ def link_maker(path, format=None):
     return ip + "/".join([i for i in path if i != "/"])
 
 
-def process_path(path):
+def process_path(path: str):
     path = path.split("/")
     path = [i for i in path if i not in ["", None]]
     path = ["/"] + path
@@ -72,42 +74,41 @@ def create_file(path: str):
         "html": "fa-brands fa-html5",
         "application/octet-stream": "far fa-file",
         "gitignore": "fa fa-file-text-o",
-        "js":'fa-brands fa-square-js',
-        
+        "js": "fa-brands fa-square-js",
     }
-    l = None
+    link_type = None
     content_type = str(guess_type(path)[0])
     file_format = path.rsplit(".")[0]
     if os.path.isdir(path):
         icon = icons["folder"]
-        l = "show"
+        link_type = "show"
     elif content_type.startswith("image"):
         icon = icons["photo"]
-        l = "photo"
+        link_type = "photo"
     elif content_type.startswith("audio"):
         icon = icons["music"]
-        l = "audio"
+        link_type = "audio"
     elif content_type.startswith("video"):
         icon = icons["video"]
-        l = "video"
+        link_type = "video"
     elif file_format == "ms":
         icon = icons["text/markdown"]
-        l = "text"
+        link_type = "text"
     elif file_format == "js":
         icon = icons["js"]
-        l = "text"
+        link_type = "text"
     elif file_format == "java":
         icon = icons["java"]
-        l = "text"
-    elif content_type.endswith('python'):
+        link_type = "text"
+    elif content_type.endswith("python"):
         icon = icons["text/x-python"]
-        l = "text"
+        link_type = "text"
     elif content_type.startswith("text"):
         icon = icons["txt"]
-        l = "text"
+        link_type = "text"
     else:
         icon = icons["application/octet-stream"]
-        l = "dl"
+        link_type = "dl"
     return str(
         Div(
             classs="""file-item""",
@@ -131,7 +132,7 @@ def create_file(path: str):
                     classs=f"""file-item-icon {icon} text-secondary""",
                 ),
                 A(
-                    href=f"""{link_maker(path, l)}""",
+                    href=f"""{link_maker(path, link_type)}""",
                     classs="""file-item-name""",
                     data=(path.split("/")[-1]),
                 ),
@@ -184,9 +185,6 @@ def create_file(path: str):
     )
 
 
-from concurrent.futures import ThreadPoolExecutor
-
-
 def create_file_threaded(path, out):
     file_data = create_file(path)
     out.append(file_data)
@@ -202,8 +200,7 @@ def files(path: str):
     listdir = os.listdir(path)
     out = []
 
-    # Use a ThreadPoolExecutor for parallel execution
-    with ThreadPoolExecutor(max_workers=30) as executor:  # Adjust max_workers as needed
+    with ThreadPoolExecutor(max_workers=30) as executor:
         futures = []
         for i in listdir:
             file_path = path + "/" + i
@@ -211,6 +208,6 @@ def files(path: str):
             futures.append(future)
 
         for future in futures:
-            future.result()  # Wait for all threads to complete
+            future.result()
 
     return out

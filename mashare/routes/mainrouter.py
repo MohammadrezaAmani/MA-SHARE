@@ -4,10 +4,11 @@ from fastapi import APIRouter
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 
-# from mashare.templates.templates import template
-from mashare.templates.file_table import file_table
 from mashare import BASE_PATH
 from mashare.data import cache
+
+# from mashare.templates.templates import template
+from mashare.templates.file_table import file_table
 
 router = APIRouter(
     prefix="/show",

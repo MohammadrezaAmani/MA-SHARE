@@ -1,5 +1,4 @@
-from inui.elements import *
-from mashare import BASE_PATH
+from inui.elements import Head, Link, Meta, Title
 
 
 def header(style=None, script=None):
@@ -29,12 +28,14 @@ def header(style=None, script=None):
                     href="""/assets/css/home.css""",
                     rel="""stylesheet""",
                 ),
-                Link(
-                    href=style,
-                    rel="""stylesheet""",
-                )
-                if style is not None
-                else "",
+                (
+                    Link(
+                        href=style,
+                        rel="""stylesheet""",
+                    )
+                    if style is not None
+                    else ""
+                ),
             )
         )
     )

@@ -1,10 +1,9 @@
-# -------------- Imports --------------
-import os
-import mimetypes
 import datetime
+import mimetypes
+import os
+import subprocess
 
 
-# ------------- Functions -------------
 def convert_file_size(file_size: int) -> str:
     """convert file size to human readable format
 
@@ -52,9 +51,6 @@ def get_files(path: str) -> dict:
 
     details = dict(sorted(details.items(), key=lambda item: item[1]["file_type"]))
     return details
-
-
-import subprocess
 
 
 def conf():

@@ -5,14 +5,13 @@ from fastapi.staticfiles import StaticFiles
 
 from mashare.routes.download import router as downloadrouter
 from mashare.routes.edit import router as editrouter
-from mashare.routes.music import router as musicrouter
 from mashare.routes.mainrouter import router as mainrouter
-from mashare.routes.video import router as videorouter
+from mashare.routes.music import router as musicrouter
 from mashare.routes.photo import router as photorouter
-
 from mashare.routes.upload import router as uploadrouter
-from mashare.utils.utils import conf
+from mashare.routes.video import router as videorouter
 from mashare.utils.qr import generate_qr_code
+from mashare.utils.utils import conf
 
 app = FastAPI()
 app.mount("/assets", StaticFiles(directory="assets"), name="assets")

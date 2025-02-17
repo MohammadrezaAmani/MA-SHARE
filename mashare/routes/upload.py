@@ -1,11 +1,15 @@
 """
 include download routes
 """
+
 import os
 import shutil
-from fastapi import APIRouter, UploadFile, File
+
+from fastapi import APIRouter
 from fastapi.responses import RedirectResponse
+
 from mashare.templates.utils import link_maker
+
 router = APIRouter(
     prefix="/upload",
     tags=["upload"],
@@ -13,11 +17,10 @@ router = APIRouter(
 )
 
 
-
 @router.post("/{file_path:path}")
 async def create_upload_files(file_path: str, files):
     "to handle uploaded files"
-    file_path = '/' + file_path
+    file_path = "/" + file_path
     print(file_path)
     if not os.path.exists(file_path):
         os.makedirs(file_path)
@@ -29,4 +32,4 @@ async def create_upload_files(file_path: str, files):
         with open(dest, "wb") as buffer:
             shutil.copyfileobj(file.file, buffer)
 
-    return RedirectResponse(url=link_maker(file_path,'show'), status_code=303)
+    return RedirectResponse(url=link_maker(file_path, "show"), status_code=303)

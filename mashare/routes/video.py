@@ -4,9 +4,10 @@ from fastapi import APIRouter
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 
+from mashare import BASE_PATH
+
 # from mashare.templates.templates import template
 from mashare.templates.video import video_player
-from mashare import BASE_PATH
 
 router = APIRouter(
     prefix="/video",

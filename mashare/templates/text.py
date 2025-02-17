@@ -1,4 +1,5 @@
-from inui.elements import *
+from inui.elements import Button, Div, Script, Textarea
+
 from .base import base
 
 

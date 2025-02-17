@@ -1,4 +1,5 @@
-from inui.elements import Div, Video, Button, I, Script, Span
+from inui.elements import Button, Div, I, Script, Span, Video
+
 from .base import base
 
 

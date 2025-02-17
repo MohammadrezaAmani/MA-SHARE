@@ -14,7 +14,7 @@ class Cache:
         return True
 
     def check(self, path):
-        if not path in self.db:
+        if path not in self.db:
             return
         if os.path.getctime(path) != self.db[path]["lchange"]:
             return
